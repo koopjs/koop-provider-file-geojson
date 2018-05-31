@@ -7,7 +7,8 @@
     "clean": "rm -rf dist",
     "compile": "buble -i src -o dist",
     "package": "npm run clean && npm run compile",
-    "test": "standard && tape test/*.js | tap-spec"
+    "start": "node server.js",
+    "test": "standard"
   },
   "repository": {
     "type": "git",
@@ -24,5 +25,9 @@
   "bugs": {
     "url": "https://github.com/koopjs/koop-provider-file-geojson/issues"
   },
-  "homepage": "https://github.com/koopjs/koop-provider-file-geojson#readme"
+  "homepage": "https://github.com/koopjs/koop-provider-file-geojson#readme",
+  "dependencies": {
+    "@mapbox/geojsonhint": "^2.1.0",
+    "koop": "^3.7.0"
+  }
 }

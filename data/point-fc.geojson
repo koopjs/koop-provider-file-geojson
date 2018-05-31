@@ -1,0 +1,61 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "interval": 0, 
+        "label": "Day 1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.14486694336,
+          47.884118004966
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "interval": 1, 
+        "label": "Day 2"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.27807617188,
+          47.833439707628
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "interval": 2, 
+        "label": "Day 3"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.0954284668,
+          47.768868404242
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "interval": 3, 
+        "label": "Day 4"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.3069152832,
+          47.980729943478
+        ]
+      }
+    }
+  ]
+}
