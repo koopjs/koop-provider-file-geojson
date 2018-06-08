@@ -1,6 +1,5 @@
 const fs = require('fs')
 const path = require('path')
-const geojsonhint = require('@mapbox/geojsonhint')
 const dataDir = process.env.DATA_DIR || './data'
 const dataDirPath = path.join(process.cwd(), dataDir)
 
@@ -35,13 +34,8 @@ Model.prototype.getData = function (req, callback) {
     }
     if (err) return callback(err)
 
-    const geojsonStr = dataBuffer.toString()
-    const geojsonErrors = geojsonhint.hint(geojsonStr)
-    if (geojsonErrors.length > 0) {
-      return callback(new Error(`"${filename}" exists but is not valid GeoJSON. ${geojsonErrors[0].message}`))
-    }
-
     // translate the response into geojson
+    const geojsonStr = dataBuffer.toString()
     const geojson = translate(JSON.parse(geojsonStr))
 
     // Cache data for 10 seconds at a time by setting the ttl or "Time to Live"

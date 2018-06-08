@@ -27,7 +27,6 @@
   },
   "homepage": "https://github.com/koopjs/koop-provider-file-geojson#readme",
   "dependencies": {
-    "@mapbox/geojsonhint": "^2.1.0",
     "koop": "^3.7.0"
   }
 }
