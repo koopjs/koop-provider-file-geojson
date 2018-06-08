@@ -1,0 +1,14 @@
+{
+  "type": "Feature",
+  "properties": {
+    "interval": 0, 
+    "label": "Day 1"
+  },
+  "geometry": {
+    "type": "Point",
+    "coordinates": [
+      -121.14486694336,
+      47.884118004966
+    ]
+  }
+}
