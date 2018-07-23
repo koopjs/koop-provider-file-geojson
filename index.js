@@ -8,7 +8,7 @@
 
 const provider = {
     type: 'provider',
-    name: 'geojson',
+    name: 'file-geojson',
     hosts: false,
     disableIdParam: false,
     Model: require('./model'),

@@ -16,7 +16,7 @@ $ npm start
 
 By default, Koop will start listening on `http://localhost:8080`.  Since the repo ships with sample GeoJSON in the `/data` directory, you can issue a request by using the extension-less filenames of GeoJSON found there.  For example, the following request will serve data from the file `data/polygon-sample.geojson` :
 ```
-$ curl http://localhost:8080/geojson/rest/services/polygon-sample/FeatureServer/0/query
+$ curl http://localhost:8080/file-geojson/rest/services/polygon-sample/FeatureServer/0/query
 ```
 
 ## Usage
@@ -28,11 +28,11 @@ All valid GeoJSON files can be served.  Place them in the data directory and ens
 
 ### Request parameters
 Request a particular file by using the (extension-less) file name as the `:id` parameter in the URL.  For example, when requesting data from the file `point-fc.geojson`:
-`http://localhost:8080/geojson/rest/services/:id/FeatureServer/0/query`
+`http://localhost:8080/file-geojson/rest/services/:id/FeatureServer/0/query`
 
 becomes:
 
-`http://localhost:8080/geojson/rest/services/point-fc/FeatureServer/0/query` 
+`http://localhost:8080/file-geojson/rest/services/point-fc/FeatureServer/0/query` 
 
 ## Contributing
 
