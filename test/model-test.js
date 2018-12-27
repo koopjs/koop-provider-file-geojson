@@ -1,7 +1,7 @@
 const test = require('tape')
 const proxyquire = require('proxyquire')
 const fsStub = {}
-const Model = proxyquire('../model', { 'fs': fsStub })
+const Model = proxyquire('../src/model', { 'fs': fsStub })
 const model = new Model()
 const pointFc = require('./fixtures/point-fc.json')
 const pointF = require('./fixtures/point-f.json')
