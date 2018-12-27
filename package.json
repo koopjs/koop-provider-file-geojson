@@ -8,7 +8,7 @@
     "compile": "buble -i src -o dist",
     "package": "npm run clean && npm run compile",
     "start": "node server.js",
-    "test": "standard"
+    "test": "standard && tape test/*.js | tap-spec"
   },
   "repository": {
     "type": "git",
@@ -18,9 +18,10 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "buble": "^0.19.3",
+    "proxyquire": "^2.1.0",
     "standard": "^11.0.1",
     "tap-spec": "^4.1.1",
-    "tape": "^4.6.3"
+    "tape": "^4.9.1"
   },
   "bugs": {
     "url": "https://github.com/koopjs/koop-provider-file-geojson/issues"

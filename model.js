@@ -83,6 +83,8 @@ function translate (input) {
   }
 
   // Or its already feature collection
+  const geometryType = input.features && input.features[0] && input.features[0].geometry && input.features[0].geometry.type
+  input.metadata = { geometryType }
   return input
 }
 
