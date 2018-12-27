@@ -5,10 +5,30 @@ Serve local GeoJSON files as [Koop](https://github.com/koopjs/koop) services.  U
 
 ## Getting Started
 
+Add the provider to your koop instance
+
+``sh
+$ npm install @koopjs/provider-file-geojson
+``
+
+Then register the provider with Koop in your server file.
+
+``js
+const Koop = require('koop')
+const koop = new Koop()
+
+const provider = require('@koopjs/provider-file-geojson')
+koop.register(provider)
+``
+
 ### Example server
 The repository includes its own `server.js` that will start a Koop instance and register the file-geojson provider.  To start serving:
 
 ```sh
+git clone https://github.com/koopjs/koop-provider-file-geojson
+
+cd koop-provider-file-geojson
+
 $ npm install
 
 $ npm start

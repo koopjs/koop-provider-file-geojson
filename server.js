@@ -8,7 +8,7 @@ const koop = new Koop()
 
 const config = require('config')
 
-const provider = require('./index.js')
+const provider = require('@koopjs/provider-file-geojson')
 koop.register(provider)
 
 // Set port for configuration or fall back to default
