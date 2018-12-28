@@ -1,6 +1,6 @@
 {
   "name": "@koopjs/provider-file-geojson",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Simple provider for serving file-based GeoJSON",
   "main": "dist/index.js",
   "scripts": {
