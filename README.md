@@ -13,13 +13,13 @@ $ npm install @koopjs/provider-file-geojson
 
 Then register the provider with Koop in your server file.
 
-``js
+```js
 const Koop = require('koop')
 const koop = new Koop()
 
 const provider = require('@koopjs/provider-file-geojson')
 koop.register(provider)
-``
+```
 
 ### Example server
 The repository includes its own `server.js` that will start a Koop instance and register the file-geojson provider.  To start serving:
