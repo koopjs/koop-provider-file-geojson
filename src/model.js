@@ -7,11 +7,13 @@ const path = require('path')
 function Model (koop) {
   const dataDir = koop.dataDir || process.env.DATA_DIR || './data'
   this.dataDirPath = path.join(process.cwd(), dataDir)
-  verifyPathExists(this.dataDirPath)
+  this.log = koop.log
+  this.verifyPathExists(this.dataDirPath)
 }
 
-function verifyPathExists (dataDirPath) {
+Model.prototype.verifyPathExists = function verifyPathExists (dataDirPath) {
   // Stat the directory to ensure it exists
+  const that = this
   fs.stat(dataDirPath, function (err) {
     if (err && err.errno === -2) {
       err.message = `Data directory "${dataDirPath}" not found; ${err.message}`
@@ -21,7 +23,7 @@ function verifyPathExists (dataDirPath) {
       throw err
     }
 
-    console.log(`GeoJSON files will be read from: ${dataDirPath}`)
+    that.log.warn(`GeoJSON files will be read from: ${dataDirPath}`)
   })
 }
 
@@ -31,14 +33,15 @@ function verifyPathExists (dataDirPath) {
  * @param {object} express request object
  * @param {function} callback
  */
-Model.prototype.getData = function (req, callback) {
+Model.prototype.getData = function getData(req, callback) {
   const filename = `${req.params.id}.geojson`
   const filePath = `${this.dataDirPath}/${filename}`
+  const that = this
   fs.readFile(filePath, (err, dataBuffer) => {
     if (err && err.errno === -2) {
       err.code = 404
       err.message = 'File not found'
-      console.log(`${err.message}: ${filePath}`)
+      that.log.error(`${err.message}: ${filePath}`)
     } else if (err) {
       err.code = 500
     }
@@ -66,7 +69,7 @@ Model.prototype.getData = function (req, callback) {
       geojson.metadata.description = (metadataCopy && metadataCopy.description) || `GeoJSON from ${filename}`
       return callback(null, geojson)
     } catch (err) {
-      console.log(`Error parsing file ${filePath}: ${err.message}`)
+      that.log.error(`Error parsing file ${filePath}: ${err.message}`)
       err.message = 'Error parsing file as JSON.'
       err.code = 500
       return callback(err)
