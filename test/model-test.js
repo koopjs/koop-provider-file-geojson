@@ -2,7 +2,13 @@ const test = require('tape')
 const proxyquire = require('proxyquire')
 const fsStub = {}
 const Model = proxyquire('../src/model', { 'fs': fsStub })
-const model = new Model({})
+const fakeKoop = {
+  log: {
+    warn: console.log,
+    error: console.log
+  }
+}
+const model = new Model(fakeKoop)
 const pointFc = require('./fixtures/point-fc.json')
 const pointF = require('./fixtures/point-f.json')
 const point = require('./fixtures/point.json')

@@ -60,7 +60,7 @@ Model.prototype.getData = function getData (req, callback) {
       const geojson = translate(geojsonParsed)
 
       // Cache data for 10 seconds at a time by setting the ttl or "Time to Live"
-      geojson.ttl = metadataCopy.ttl || 10
+      geojson.ttl = _.get(metadataCopy, 'ttl', 10)
 
       const detectedGeometryType = geojson.metadata.geometryType
       // Add metadata
