@@ -36,64 +36,27 @@ Model.prototype.getData = function (req, callback) {
   fs.readFile(filePath, (err, dataBuffer) => {
     if (err && err.errno === -2) {
       err.code = 404
-      err.message = `File "${filename}" not found.`
+      err.message = 'File not found'
+      console.log(`${err.message}: ${filePath}`)
     } else if (err) {
       err.code = 500
     }
-    if (err) return callback(err)
 
-    // translate the response into geojson
-    const geojsonStr = dataBuffer.toString()
-    const geojson = translate(JSON.parse(geojsonStr))
+    if (err) {
+      return callback(err)
+    }
 
-    // Cache data for 10 seconds at a time by setting the ttl or "Time to Live"
-    geojson.ttl = 10
-
-    // Add metadata
-    geojson.metadata = geojson.metadata || {}
-    geojson.metadata.title = 'Koop GeoJSON'
-    geojson.metadata.name = filename
-    geojson.metadata.description = `GeoJSON from ${filename}`
-    callback(null, geojson)
+    try {
+      const geojsonStr = dataBuffer.toString()
+      const geojson = JSON.parse(geojsonStr)
+      return callback(null, geojson)
+    } catch (err) {
+      console.log(`Error parsing file ${filePath}: ${err.message}`)
+      err.message = 'Error parsing file as JSON.'
+      err.code = 500
+      return callback(err)
+    }
   })
-}
-
-/**
- * GeoJSON to convert into required Koop format
- * @param {object} input GeoJSON
- * @returns {object} standardized feature collection
- */
-function translate (input) {
-  // If input type is Feature, wrap in Feature Collection
-  if (input.type === 'Feature') {
-    return {
-      type: 'FeatureCollection',
-      features: [input],
-      metadata: {
-        geometryType: input.geometry.type
-      }
-    }
-  }
-
-  // If it's neither a Feature or a FeatureCollection its a geometry.  Wrap in a Feature Collection
-  if (input.type !== 'FeatureCollection') {
-    return {
-      type: 'FeatureCollection',
-      features: [{
-        type: 'Feature',
-        geometry: input,
-        properties: {}
-      }],
-      metadata: {
-        geometryType: input.type
-      }
-    }
-  }
-
-  // Or its already feature collection
-  const geometryType = input.features && input.features[0] && input.features[0].geometry && input.features[0].geometry.type
-  input.metadata = { geometryType }
-  return input
 }
 
 module.exports = Model
