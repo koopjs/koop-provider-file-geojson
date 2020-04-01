@@ -35,7 +35,7 @@ Model.prototype.verifyPathExists = function verifyPathExists (dataDirPath) {
  * @param {object} express request object
  * @param {function} callback
  */
-Model.prototype.getData = function getData(req, callback) {
+Model.prototype.getData = function getData (req, callback) {
   const filename = `${req.params.id}.geojson`
   const filePath = `${this.dataDirPath}/${filename}`
   const that = this
@@ -66,7 +66,7 @@ Model.prototype.getData = function getData(req, callback) {
       // Add metadata
       geojson.metadata = metadataCopy || {}
       geojson.metadata.geometryType = detectedGeometryType
-      geojson.metadata.title =  _.get(metadataCopy, 'title', 'Koop GeoJSON')
+      geojson.metadata.title = _.get(metadataCopy, 'title', 'Koop GeoJSON')
       geojson.metadata.name = _.get(metadataCopy, 'name', filename)
       geojson.metadata.description = _.get(metadataCopy, 'description', `GeoJSON from ${filename}`)
       return callback(null, geojson)
