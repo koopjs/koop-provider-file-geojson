@@ -1,8 +1,8 @@
 {
   "name": "@koopjs/provider-file-geojson",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Simple provider for serving file-based GeoJSON",
-  "main": "dist/index.js",
+  "main": "src/index.js",
   "scripts": {
     "clean": "rm -rf dist",
     "compile": "buble -i src -o dist",
