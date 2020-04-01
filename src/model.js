@@ -1,10 +1,12 @@
 const fs = require('fs')
 const path = require('path')
 
+const _ = require('lodash')
+
 /**
  * Model constructor
  */
-function Model (koop) {
+function Model (koop = {}) {
   const dataDir = koop.dataDir || process.env.DATA_DIR || './data'
   this.dataDirPath = path.join(process.cwd(), dataDir)
   this.log = koop.log
@@ -64,9 +66,9 @@ Model.prototype.getData = function getData(req, callback) {
       // Add metadata
       geojson.metadata = metadataCopy || {}
       geojson.metadata.geometryType = detectedGeometryType
-      geojson.metadata.title = (metadataCopy && metadataCopy.title) || 'Koop GeoJSON'
-      geojson.metadata.name = (metadataCopy && metadataCopy.name) || filename
-      geojson.metadata.description = (metadataCopy && metadataCopy.description) || `GeoJSON from ${filename}`
+      geojson.metadata.title =  _.get(metadataCopy, 'title', 'Koop GeoJSON')
+      geojson.metadata.name = _.get(metadataCopy, 'name', filename)
+      geojson.metadata.description = _.get(metadataCopy, 'description', `GeoJSON from ${filename}`)
       return callback(null, geojson)
     } catch (err) {
       that.log.error(`Error parsing file ${filePath}: ${err.message}`)
