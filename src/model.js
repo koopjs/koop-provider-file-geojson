@@ -51,18 +51,19 @@ Model.prototype.getData = function (req, callback) {
       // translate the response into geojson
       const geojsonStr = dataBuffer.toString()
       const geojsonParsed = JSON.parse(geojsonStr)
+      const metadataCopy = geojsonParsed.metadata
       const geojson = translate(geojsonParsed)
 
       // Cache data for 10 seconds at a time by setting the ttl or "Time to Live"
-      geojson.ttl = geojsonParsed.metadata || 10
+      geojson.ttl = metadataCopy.ttl || 10
 
       const detectedGeometryType = geojson.metadata.geometryType
       // Add metadata
-      geojson.metadata = geojsonParsed.metadata || {}
+      geojson.metadata = metadataCopy || {}
       geojson.metadata.geometryType = detectedGeometryType
-      geojson.metadata.title = (geojsonParsed.metadata && geojsonParsed.metadata.title) || 'Koop GeoJSON'
-      geojson.metadata.name = (geojsonParsed.metadata && geojsonParsed.metadata.name) || filename
-      geojson.metadata.description = (geojsonParsed.metadata && geojsonParsed.metadata.description) || `GeoJSON from ${filename}`
+      geojson.metadata.title = (metadataCopy && metadataCopy.title) || 'Koop GeoJSON'
+      geojson.metadata.name = (metadataCopy && metadataCopy.name) || filename
+      geojson.metadata.description = (metadataCopy && metadataCopy.description) || `GeoJSON from ${filename}`
       return callback(null, geojson)
     } catch (err) {
       console.log(`Error parsing file ${filePath}: ${err.message}`)
