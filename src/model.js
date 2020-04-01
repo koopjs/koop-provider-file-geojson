@@ -32,7 +32,8 @@ function verifyPathExists (dataDirPath) {
  * @param {function} callback
  */
 Model.prototype.getData = function (req, callback) {
-  const filePath = `${this.dataDirPath}/${req.params.id}.geojson`
+  const filename = `${req.params.id}.geojson`;
+  const filePath = `${this.dataDirPath}/${filename}`
   fs.readFile(filePath, (err, dataBuffer) => {
     if (err && err.errno === -2) {
       err.code = 404
@@ -47,8 +48,21 @@ Model.prototype.getData = function (req, callback) {
     }
 
     try {
+      // translate the response into geojson
       const geojsonStr = dataBuffer.toString()
-      const geojson = JSON.parse(geojsonStr)
+      const geojsonParsed = JSON.parse(geojsonStr)
+      const geojson = translate(geojsonParsed)
+
+      // Cache data for 10 seconds at a time by setting the ttl or "Time to Live"
+      geojson.ttl = geojsonParsed.metadata || 10
+
+      const detectedGeometryType = geojson.metadata.geometryType
+      // Add metadata
+      geojson.metadata = geojsonParsed.metadata || {}
+      geojson.metadata.geometryType = detectedGeometryType
+      geojson.metadata.title = (geojsonParsed.metadata && geojsonParsed.metadata.title) || 'Koop GeoJSON'
+      geojson.metadata.name = (geojsonParsed.metadata && geojsonParsed.metadata.name) || filename
+      geojson.metadata.description = (geojsonParsed.metadata && geojsonParsed.metadata.description) || `GeoJSON from ${filename}`
       return callback(null, geojson)
     } catch (err) {
       console.log(`Error parsing file ${filePath}: ${err.message}`)
@@ -57,6 +71,44 @@ Model.prototype.getData = function (req, callback) {
       return callback(err)
     }
   })
+}
+
+/**
+ * GeoJSON to convert into required Koop format
+ * @param {object} input GeoJSON
+ * @returns {object} standardized feature collection
+ */
+function translate (input) {
+  // If input type is Feature, wrap in Feature Collection
+  if (input.type === 'Feature') {
+    return {
+      type: 'FeatureCollection',
+      features: [input],
+      metadata: {
+        geometryType: input.geometry.type
+      }
+    }
+  }
+
+  // If it's neither a Feature or a FeatureCollection its a geometry.  Wrap in a Feature Collection
+  if (input.type !== 'FeatureCollection') {
+    return {
+      type: 'FeatureCollection',
+      features: [{
+        type: 'Feature',
+        geometry: input,
+        properties: {}
+      }],
+      metadata: {
+        geometryType: input.type
+      }
+    }
+  }
+
+  // Or its already feature collection
+  const geometryType = input.features && input.features[0] && input.features[0].geometry && input.features[0].geometry.type
+  input.metadata = { geometryType }
+  return input
 }
 
 module.exports = Model
