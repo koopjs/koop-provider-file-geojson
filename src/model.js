@@ -32,7 +32,7 @@ function verifyPathExists (dataDirPath) {
  * @param {function} callback
  */
 Model.prototype.getData = function (req, callback) {
-  const filename = `${req.params.id}.geojson`;
+  const filename = `${req.params.id}.geojson`
   const filePath = `${this.dataDirPath}/${filename}`
   fs.readFile(filePath, (err, dataBuffer) => {
     if (err && err.errno === -2) {
