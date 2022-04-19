@@ -2,12 +2,8 @@
   "name": "@koopjs/provider-file-geojson",
   "version": "1.1.0",
   "description": "Simple provider for serving file-based GeoJSON",
-  "main": "dist/index.js",
+  "main": "./index.js",
   "scripts": {
-    "clean": "rm -rf dist",
-    "compile": "buble -i src -o dist",
-    "package": "npm run clean && npm run compile",
-    "start": "node server.js",
     "test": "standard && tape test/*.js | tap-spec"
   },
   "repository": {
@@ -28,7 +24,6 @@
   },
   "homepage": "https://github.com/koopjs/koop-provider-file-geojson#readme",
   "dependencies": {
-    "koop": "^3.7.0",
     "lodash": "^4.17.15"
   }
 }
