@@ -21,27 +21,21 @@ const provider = require('@koopjs/provider-file-geojson')
 koop.register(provider)
 ```
 
-### Example server
-The repository includes its own `server.js` that will start a Koop instance and register the file-geojson provider.  To start serving:
-
-```sh
-git clone https://github.com/koopjs/koop-provider-file-geojson
-
-cd koop-provider-file-geojson
-
-$ npm install
-
-$ npm start
-```
-
-By default, Koop will start listening on `http://localhost:8080`.  Since the repo ships with sample GeoJSON in the `/data` directory, you can issue a request by using the extension-less filenames of GeoJSON found there.  For example, the following request will serve data from the file `data/polygon-sample.geojson` :
+### Usage
+The provider will look for requested geojson files in a `/data` directory in the koop application root. For example, the following request will serve data from the file `data/polygon-sample.geojson` :
 ```
 $ curl http://localhost:8080/file-geojson/rest/services/polygon-sample/FeatureServer/0/query
 ```
 
 ## Usage
 ### Data directory  
-By default, the provider looks for files in the `data` directory that ships with the provider.  You can override this by setting an environment variable `KOOP_DATA_DIR=<path-to-directory>`.  The path should be relative to the `server.js` file.
+By default, the provider looks for files in the `/data` directory in the koop application root. For example, the following request will serve data from the file `data/polygon-sample.geojson`:
+
+```
+$ curl http://localhost:8080/file-geojson/rest/services/polygon-sample/FeatureServer/0/query
+```
+
+You can override where the provider looks for geojson by setting an environment variable `KOOP_DATA_DIR=<path-to-directory>`.  The path should be relative to the koop server file.
 
 ### Files
 All valid GeoJSON files can be served.  Place them in the data directory and ensure they have a `.geojson` file extension.
