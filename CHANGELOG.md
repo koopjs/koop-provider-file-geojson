@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Changed
+* Remove buble build
+* Remove demo-server
+* Add package-lock
+
 ## [1.1.0] - 2020-04-13
 ### Fixed
 * crash when files are not valid JSON
