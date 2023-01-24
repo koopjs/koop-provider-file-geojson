@@ -1,19 +1,27 @@
 const test = require('tape')
 const proxyquire = require('proxyquire')
+const path = require('path')
 const fsStub = {}
 const Model = proxyquire('../src/model', { 'fs': fsStub })
-const fakeKoop = {
-  log: {
-    warn: console.log,
-    error: console.log
-  }
+const mockLogger = {
+  warn: console.log,
+  error: console.log
 }
-const model = new Model(fakeKoop)
+const fakeKoop = {
+  log: mockLogger
+}
+const model = new Model(fakeKoop, { dataDir: './test/fixtures' })
 const pointFc = require('./fixtures/point-fc.json')
 const pointF = require('./fixtures/point-f.json')
 const point = require('./fixtures/point.json')
 
-test('should properly feature collection geojson', t => {
+test('should properly set model instance properties', t => {
+  t.plan(2)
+  t.equal(model.dataDirPath, path.join(process.cwd(), './test/fixtures'))
+  t.deepEquals(model.log, mockLogger)
+})
+
+test('should properly get feature collection geojson', t => {
   t.plan(4)
 
   fsStub.readFile = function (thePath, callback) {
@@ -29,7 +37,7 @@ test('should properly feature collection geojson', t => {
   })
 })
 
-test('should properly feature geojson', t => {
+test('should properly get feature geojson', t => {
   t.plan(4)
 
   fsStub.readFile = function (thePath, callback) {
@@ -45,7 +53,7 @@ test('should properly feature geojson', t => {
   })
 })
 
-test('should properly geometry geojson', t => {
+test('should properly get geometry geojson', t => {
   t.plan(4)
 
   fsStub.readFile = function (thePath, callback) {

@@ -6,8 +6,8 @@ const _ = require('lodash')
 /**
  * Model constructor
  */
-function Model (koop = {}) {
-  const dataDir = koop.dataDir || process.env.DATA_DIR || './data'
+function Model (koop = {}, options = {}) {
+  const dataDir = options.dataDir || koop.dataDir || process.env.DATA_DIR || './data'
   this.dataDirPath = path.join(process.cwd(), dataDir)
   this.log = koop.log
   this.verifyPathExists(this.dataDirPath)
