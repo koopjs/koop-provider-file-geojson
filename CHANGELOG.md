@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Changed
+* prefer use of data directory path from Model's options argument
+
 ## [2.0.0] - 2022-04-19
 ### Changed
 * Remove buble build
