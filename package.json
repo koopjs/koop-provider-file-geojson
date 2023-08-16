@@ -13,7 +13,7 @@
   "author": "Rich Gwozdz",
   "license": "Apache-2.0",
   "devDependencies": {
-    "buble": "^0.19.6",
+    "buble": "^0.20.0",
     "proxyquire": "^2.1.0",
     "standard": "^11.0.1",
     "tap-spec": "^5.0.0",
