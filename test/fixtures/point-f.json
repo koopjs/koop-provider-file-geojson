@@ -1,8 +1,6 @@
 {
   "type": "Feature",
   "properties": {
-    "interval": 0, 
-    "label": "Day 1"
   },
   "geometry": {
     "type": "Point",

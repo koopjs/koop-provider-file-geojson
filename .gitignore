@@ -9,3 +9,4 @@ test/test.log.**
 .idea
 dist
 .DS_Store
+coverage
