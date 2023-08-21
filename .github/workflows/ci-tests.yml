@@ -1,0 +1,45 @@
+name: CI tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches:
+      - master
+      - next
+      - beta
+    paths:
+      - "./.github/**.yml"
+      - "**/src/**.js"
+      - "./package.json"
+
+jobs:
+  pr-tests:
+    name: Install, lint, test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        node-version: [14.x, 16.x, 18.x]
+        os: [ubuntu-latest, windows-latest]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Install npm 7
+      run: npm i -g npm@7 --registry=https://registry.npmjs.org
+      
+    - name: Install
+      run: npm ci
+
+    - name: Lint
+      run: npm run lint:ci
+
+    - name: Unit tests
+      run: npm test --workspaces
+    
+    - name: E2E tests
+      run: npm test
