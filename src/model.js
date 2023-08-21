@@ -1,90 +1,82 @@
-const fs = require('fs')
-const path = require('path')
+const fs = require('fs-extra');
+const path = require('path');
+const loggingPrefix = 'File GeoJSON provider: '
 
-const _ = require('lodash')
+class Model {
+  #dataDir;
+  #dataDirPath;
+  #ttl;
+  #logger;
 
-/**
- * Model constructor
- */
-function Model (koop = {}, options = {}) {
-  const dataDir = options.dataDir || koop.dataDir || process.env.DATA_DIR || './data'
-  this.dataDirPath = path.join(process.cwd(), dataDir)
-  this.log = koop.log
-  this.verifyPathExists(this.dataDirPath)
-}
+  constructor (koop = {}, options = {}) {
+    this.#logger = koop.logger;
+    this.#dataDir = options.dataDir || koop.dataDir || process.env.DATA_DIR || './data';
+    this.#dataDirPath = path.join(process.cwd(), this.#dataDir);
+    this.#ttl = options.ttl || 0;
+    this.#verifyDataDirectoryExists(this.#dataDirPath);
+  }
 
-Model.prototype.verifyPathExists = function verifyPathExists (dataDirPath) {
-  // Stat the directory to ensure it exists
-  const that = this
-  fs.stat(dataDirPath, function (err) {
-    if (err && err.errno === -2) {
-      err.message = `Data directory "${dataDirPath}" not found; ${err.message}`
-    }
-
-    if (err) {
-      throw err
-    }
-
-    that.log.warn(`GeoJSON files will be read from: ${dataDirPath}`)
-  })
-}
-
-/**
- * Fetch data from source.  Pass result or error to callback.
- * This is the only public function you need to implement on Model
- * @param {object} express request object
- * @param {function} callback
- */
-Model.prototype.getData = function getData (req, callback) {
-  const filename = `${req.params.id}.geojson`
-  const filePath = `${this.dataDirPath}/${filename}`
-  const that = this
-  fs.readFile(filePath, (err, dataBuffer) => {
-    if (err && err.errno === -2) {
-      err.code = 404
-      err.message = 'File not found'
-      that.log.error(`${err.message}: ${filePath}`)
-    } else if (err) {
-      err.code = 500
-    }
-
-    if (err) {
-      return callback(err)
-    }
-
+  async getData (req, callback) {
+    const filePath = await this.#getFileName(req.params.id);
+    const filename = path.basename(filePath);
+    
     try {
-      // translate the response into geojson
-      const geojsonStr = dataBuffer.toString()
-      const geojsonParsed = JSON.parse(geojsonStr)
-      const metadataCopy = geojsonParsed.metadata
-      const geojson = translate(geojsonParsed)
-
-      // Cache data for 10 seconds at a time by setting the ttl or "Time to Live"
-      geojson.ttl = _.get(metadataCopy, 'ttl', 10)
-
-      const detectedGeometryType = geojson.metadata.geometryType
-      // Add metadata
-      geojson.metadata = metadataCopy || {}
-      geojson.metadata.geometryType = detectedGeometryType
-      geojson.metadata.title = _.get(metadataCopy, 'title', 'Koop GeoJSON')
-      geojson.metadata.name = _.get(metadataCopy, 'name', filename)
-      geojson.metadata.description = _.get(metadataCopy, 'description', `GeoJSON from ${filename}`)
-      return callback(null, geojson)
+      const dataStringFromFile = await readGeoJsonFile(filePath);
+      const { metadata = {}, ...geojsonFromFile } = parseGeoJson(dataStringFromFile, filename);
+      const geojson = normalizeAsFeatureCollection(geojsonFromFile);
+      geojson.ttl = this.#ttl;
+      metadata.geometryType = geojson?.features[0]?.geometry?.type;
+      metadata.title = metadata.title || 'Koop File GeoJSON';
+      metadata.name = metadata.name || filename;
+      metadata.description = metadata.description || `GeoJSON from ${filename}`;
+      geojson.metadata = metadata;
+      return callback(null, geojson);
     } catch (err) {
-      that.log.error(`Error parsing file ${filePath}: ${err.message}`)
-      err.message = 'Error parsing file as JSON.'
-      err.code = 500
-      return callback(err)
+      err.message = `${loggingPrefix}${err.message}`;
+      callback(err);
     }
-  })
+  }
+
+  async #getFileName(fileId) {
+    const pathWithNoExt = path.join(this.#dataDirPath, fileId);
+    const geojsonExt = await fs.pathExists(`${pathWithNoExt}.geojson`);
+    return geojsonExt ? `${pathWithNoExt}.geojson` : `${pathWithNoExt}.json`;
+  }
+
+  #verifyDataDirectoryExists (dataDirPath) {
+    const result = fs.existsSync(dataDirPath);
+    if(!result) {
+      throw new Error(`${loggingPrefix}data directory "${this.#dataDir}" not found.`);
+    }
+
+    this.#logger.info(`${loggingPrefix}will read data from ${this.#dataDir}`);
+  }
 }
 
-/**
- * GeoJSON to convert into required Koop format
- * @param {object} input GeoJSON
- * @returns {object} standardized feature collection
- */
-function translate (input) {
+async function readGeoJsonFile (filePath) {
+  try {
+    const dataBuffer = await fs.readFile(filePath);
+    return dataBuffer.toString();
+  } catch (err) {
+    if (err.errno === -2) {
+      err.code = 404;
+      err.message = `${path.basename(filePath)} not found`;
+    } else {
+      err.code = 500;
+    }
+    throw err;
+  }
+}
+
+function parseGeoJson (dataString, filename) {
+  try {
+    return JSON.parse(dataString);
+  } catch (error) {
+    throw new Error(`unparsable JSON in ${filename}`);
+  }
+}
+
+function normalizeAsFeatureCollection (input) {
   // If input type is Feature, wrap in Feature Collection
   if (input.type === 'Feature') {
     return {
@@ -93,7 +85,7 @@ function translate (input) {
       metadata: {
         geometryType: input.geometry.type
       }
-    }
+    };
   }
 
   // If it's neither a Feature or a FeatureCollection its a geometry.  Wrap in a Feature Collection
@@ -108,13 +100,10 @@ function translate (input) {
       metadata: {
         geometryType: input.type
       }
-    }
+    };
   }
 
-  // Or its already feature collection
-  const geometryType = input.features && input.features[0] && input.features[0].geometry && input.features[0].geometry.type
-  input.metadata = { geometryType }
-  return input
+  return input;
 }
 
-module.exports = Model
+module.exports = Model;
