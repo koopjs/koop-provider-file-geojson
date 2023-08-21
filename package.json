@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest src/*.spec.js",
     "lint": "eslint \"src/**/*.js\"",
-    "lint:ci": "eslint \"packages/**/*.js\" --rule linebreak-style:0 ",
+    "lint:ci": "eslint \"src/**/*.js\" --rule linebreak-style:0 ",
     "lint:fix": "eslint \"src/**/*.js\" --fix",
     "demo": "node demo/index.js"
   },
