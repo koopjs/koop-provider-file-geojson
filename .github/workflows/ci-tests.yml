@@ -39,7 +39,7 @@ jobs:
       run: npm run lint:ci
 
     - name: Unit tests
-      run: npm test --workspaces
+      run: npm test
     
     - name: E2E tests
       run: npm test
