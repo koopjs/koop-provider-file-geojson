@@ -10,9 +10,6 @@ const fakeKoop = {
   logger: mockLogger,
 };
 
-const pointFc = require('../test/fixtures/point-fc.json');
-const pointF = require('../test/fixtures/point-f.json');
-const point = require('../test/fixtures/point.json');
 const { promisify } = require('util');
 
 describe('Model class', () => {

@@ -4,7 +4,6 @@ module.exports = {
     es6: true,
     mocha: true,
     jest: true,
-    circus: true,
     node: true
   },
   extends: 'eslint:recommended',
@@ -14,6 +13,7 @@ module.exports = {
     process: 'readonly',
     console: 'readonly',
     __dirname: 'readonly',
+    fail: 'readonly'
   },
   parserOptions: {
     ecmaVersion: 2022,

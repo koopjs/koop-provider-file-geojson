@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const path = require('path');
-const loggingPrefix = 'File GeoJSON provider: '
+const loggingPrefix = 'File GeoJSON provider: ';
 
 class Model {
   #dataDir;
